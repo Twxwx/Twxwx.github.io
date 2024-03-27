@@ -1,0 +1,189 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>多任务学习综述 | Xinhao Zhong</title><meta name="author" content="Xinhao Zhong"><meta name="copyright" content="Xinhao Zhong"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="什么是多任务学习？ 多任务学习：  给定 m 个学习任务，这 m 个任务或它们的一个子集彼此相关但不完全相同。通过使用所有 m 个任务中包含的知识，有助于改善特定模型的学习。   多任务学习的特点：  具有相关联任务效果相互提升作用，即同时学习多个任务，若某个任务中包含对另一个任务有用的信息，则能够提高在后者上的表现； 具有正则化的效果，即模型不仅需要在一个任务上表现较好，还需要再别的任务上表现好">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多任务学习综述">
+<meta property="og:url" content="http://example.com/2024/02/02/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/index.html">
+<meta property="og:site_name" content="Xinhao Zhong">
+<meta property="og:description" content="什么是多任务学习？ 多任务学习：  给定 m 个学习任务，这 m 个任务或它们的一个子集彼此相关但不完全相同。通过使用所有 m 个任务中包含的知识，有助于改善特定模型的学习。   多任务学习的特点：  具有相关联任务效果相互提升作用，即同时学习多个任务，若某个任务中包含对另一个任务有用的信息，则能够提高在后者上的表现； 具有正则化的效果，即模型不仅需要在一个任务上表现较好，还需要再别的任务上表现好">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/cover.jpeg">
+<meta property="article:published_time" content="2024-02-02T09:08:11.000Z">
+<meta property="article:modified_time" content="2024-03-08T09:00:53.023Z">
+<meta property="article:author" content="Xinhao Zhong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/cover.jpeg"><link rel="shortcut icon" href="/img/crucifix.png"><link rel="canonical" href="http://example.com/2024/02/02/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '多任务学习综述',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-08 17:00:53'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/cover.jpeg')"><nav id="nav"><span id="blog-info"><a href="/" title="Xinhao Zhong"><span class="site-name">Xinhao Zhong</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">多任务学习综述</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-02-02T09:08:11.000Z" title="发表于 2024-02-02 17:08:11">2024-02-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-08T09:00:53.023Z" title="更新于 2024-03-08 17:00:53">2024-03-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="多任务学习综述"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="什么是多任务学习？"><a href="#什么是多任务学习？" class="headerlink" title="什么是多任务学习？"></a>什么是多任务学习？</h2><ol>
+<li><p>多任务学习：</p>
+<ul>
+<li>给定 m 个学习任务，这 m 个任务或它们的一个子集彼此相关但不完全相同。通过使用所有 m 个任务中包含的知识，有助于改善特定模型的学习。</li>
+</ul>
+</li>
+<li><p>多任务学习的特点：</p>
+<ul>
+<li>具有相关联任务效果相互提升作用，即同时学习多个任务，若某个任务中包含对另一个任务有用的信息，则能够提高在后者上的表现；</li>
+<li>具有正则化的效果，即模型不仅需要在一个任务上表现较好，还需要再别的任务上表现好，倾向于学习到在多个任务上表现都比较好的特征；</li>
+<li>多任务模型可以共享部分结构，降低内存占用，在推理时减少重复计算，提高推理速度。</li>
+</ul>
+</li>
+<li><p>MTL 处理的任务应具有一定的关联性，若同时学习两个不相关甚至冲突的任务，模型表现可能会受到损害出现经常所说的跷跷板现象，即两个任务联合学习的时候，可能一个任务效果变好，另一个任务效果变差，这个现象称为负迁移。究其本质主要是训练过程中可能出现以下 3 个问题导致的：</p>
+<ul>
+<li>多任务梯度方向不一致：同一组参数，不同的任务更新方向不同，导致模型参数出现震荡，任务之间出现负迁移的现象，一般出现在多个任务之间差异较大的场景。</li>
+<li>多任务收敛速度不一致：不同的任务收敛速度不一样，有的任务简单收敛速度快，有的任务困难收敛速度慢，导致模型训练一定轮数后，有的任务已经过拟合，有的任务还是欠拟合的状态；</li>
+<li>多任务 loss 取值量级差异大：不同的任务 loss 取值范围差异大，模型被 loss 比较大的任务主导，这种情况在两个任务使用不同损失函数，或者拟合值的取值差异大等情况下最为常见。</li>
+</ul>
+</li>
+</ol>
+<h2 id="多任务学习的网络结构"><a href="#多任务学习的网络结构" class="headerlink" title="多任务学习的网络结构"></a>多任务学习的网络结构</h2><ul>
+<li>一个高效的多任务网络，应同时兼顾特征共享部分和任务特定部分，既需要学习任务之间的泛化表示 以避免过拟合，又需要学习每个任务独有的特征以避免欠拟合。根据模型在处理不同任务时网络参数的共享程度，MTL 方法的网络结构可分为：</li>
+</ul>
+<p><img src="/img/note/202402021723.png"></p>
+<h3 id="硬参数共享-Hard-Parameter-Sharing"><a href="#硬参数共享-Hard-Parameter-Sharing" class="headerlink" title="硬参数共享 (Hard Parameter Sharing)"></a>硬参数共享 (Hard Parameter Sharing)</h3><ul>
+<li>模型的主体部分共享参数，输出结构任务独立。通过在不同任务上学习共享的特征，降低模型在单个任务上过拟合的风险。</li>
+</ul>
+<h3 id="软参数共享-Soft-Parameter-Sharing"><a href="#软参数共享-Soft-Parameter-Sharing" class="headerlink" title="软参数共享 (Soft Parameter Sharing)"></a>软参数共享 (Soft Parameter Sharing)</h3><ul>
+<li>不同任务采用独立模型，模型参数彼此约束。底层共享一部分参数，自己还有独特的一部分参数不共享；顶层有自己的参数。底层共享的、不共享的参数如何融合到一起送到顶层，是研究人员们关注的重点。</li>
+</ul>
+<h2 id="多任务学习中的损失函数"><a href="#多任务学习中的损失函数" class="headerlink" title="多任务学习中的损失函数"></a>多任务学习中的损失函数</h2><ul>
+<li>多任务学习将多个相关的任务共同训练，其总损失函数是每个任务的损失函数的加权求和式。权重的选择应能够平衡每个任务的训练，使得各任务都获得有益的提升。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Xinhao Zhong</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/02/02/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/">http://example.com/2024/02/02/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Xinhao Zhong</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/cover.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/02/03/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95%E7%9B%B8%E5%85%B3/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E4%B8%AD%E7%9A%84bias%E5%92%8Cdebias/" title="推荐系统中的 bias 和 debias"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">推荐系统中的 bias 和 debias</div></div></a></div><div class="next-post pull-right"><a href="/2024/02/02/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E9%95%BF%E6%96%87%E6%9C%AC%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" title="长文本解决方法"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">长文本解决方法</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Xinhao Zhong</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">14</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Twxwx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">A Little Bit More</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%AD%A6%E4%B9%A0%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">什么是多任务学习？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%AD%A6%E4%B9%A0%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">多任务学习的网络结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E5%8F%82%E6%95%B0%E5%85%B1%E4%BA%AB-Hard-Parameter-Sharing"><span class="toc-number">2.1.</span> <span class="toc-text">硬参数共享 (Hard Parameter Sharing)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AF%E5%8F%82%E6%95%B0%E5%85%B1%E4%BA%AB-Soft-Parameter-Sharing"><span class="toc-number">2.2.</span> <span class="toc-text">软参数共享 (Soft Parameter Sharing)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">3.</span> <span class="toc-text">多任务学习中的损失函数</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/27/%E5%A4%A7%E6%A8%A1%E5%9E%8B/PyTorch/" title="PyTorch">PyTorch</a><time datetime="2024-03-27T04:01:28.000Z" title="发表于 2024-03-27 12:01:28">2024-03-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/20/%E5%85%AB%E8%82%A1/" title="八股">八股</a><time datetime="2024-03-20T07:35:40.000Z" title="发表于 2024-03-20 15:35:40">2024-03-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/16/%E5%85%B6%E4%BB%96%E7%9F%A5%E8%AF%86/%E5%90%91%E9%87%8F%E6%A3%80%E7%B4%A2/" title="向量检索">向量检索</a><time datetime="2024-03-16T10:28:32.000Z" title="发表于 2024-03-16 18:28:32">2024-03-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/16/NLP/XLNet/" title="XLNet">XLNet</a><time datetime="2024-03-16T07:33:52.000Z" title="发表于 2024-03-16 15:33:52">2024-03-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/16/NLP/BGE/" title="BGE">BGE</a><time datetime="2024-03-16T05:51:26.000Z" title="发表于 2024-03-16 13:51:26">2024-03-16</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Xinhao Zhong</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

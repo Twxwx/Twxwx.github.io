@@ -1,0 +1,201 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>推荐系统召回篇 | Xinhao Zhong</title><meta name="author" content="Xinhao Zhong"><meta name="copyright" content="Xinhao Zhong"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="召回层的作用和意义 召回阶段负责从海量数据中快速筛选出部分数据。  在精排阶段，一般会使用复杂的模型和特征，对上百万的候选集排序。  加入召回过程，利用少量的特征和简单的模型或规则对候选集快速筛选，减少后面排序阶段的时间开销。  召回和排序有如下特点：  召回层：候选集规模大、模型和特征简单、速度快，尽量保证用户感兴趣数据多召回。 排序层：候选集不大，目标是保证排序的精准，一般使用复杂和模型和特征">
+<meta property="og:type" content="article">
+<meta property="og:title" content="推荐系统召回篇">
+<meta property="og:url" content="http://example.com/2024/02/04/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%8F%AC%E5%9B%9E%E7%AF%87/index.html">
+<meta property="og:site_name" content="Xinhao Zhong">
+<meta property="og:description" content="召回层的作用和意义 召回阶段负责从海量数据中快速筛选出部分数据。  在精排阶段，一般会使用复杂的模型和特征，对上百万的候选集排序。  加入召回过程，利用少量的特征和简单的模型或规则对候选集快速筛选，减少后面排序阶段的时间开销。  召回和排序有如下特点：  召回层：候选集规模大、模型和特征简单、速度快，尽量保证用户感兴趣数据多召回。 排序层：候选集不大，目标是保证排序的精准，一般使用复杂和模型和特征">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/cover.jpeg">
+<meta property="article:published_time" content="2024-02-04T09:35:25.000Z">
+<meta property="article:modified_time" content="2024-03-30T06:23:03.624Z">
+<meta property="article:author" content="Xinhao Zhong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/cover.jpeg"><link rel="shortcut icon" href="/img/crucifix.png"><link rel="canonical" href="http://example.com/2024/02/04/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%8F%AC%E5%9B%9E%E7%AF%87/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '推荐系统召回篇',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-30 14:23:03'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">18</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/cover.jpeg')"><nav id="nav"><span id="blog-info"><a href="/" title="Xinhao Zhong"><span class="site-name">Xinhao Zhong</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">推荐系统召回篇</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-02-04T09:35:25.000Z" title="发表于 2024-02-04 17:35:25">2024-02-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-30T06:23:03.624Z" title="更新于 2024-03-30 14:23:03">2024-03-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95/">推荐算法</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="推荐系统召回篇"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="召回层的作用和意义"><a href="#召回层的作用和意义" class="headerlink" title="召回层的作用和意义"></a>召回层的作用和意义</h2><ul>
+<li><p>召回阶段负责从海量数据中快速筛选出部分数据。</p>
+</li>
+<li><p>在精排阶段，一般会使用复杂的模型和特征，对上百万的候选集排序。</p>
+</li>
+<li><p>加入召回过程，利用少量的特征和简单的模型或规则对候选集快速筛选，减少后面排序阶段的时间开销。</p>
+</li>
+<li><p>召回和排序有如下特点：</p>
+<ul>
+<li>召回层：候选集规模大、模型和特征简单、速度快，尽量保证用户感兴趣数据多召回。</li>
+<li>排序层：候选集不大，目标是保证排序的精准，一般使用复杂和模型和特征。</li>
+</ul>
+</li>
+<li><p>在设计召回层时，需要同时考虑召回率和计算速度，既要召回用户感兴趣数据，又要召回热点和时效性数据，如果一次同时召回，那么时间开销会是问题。这时候，一般考虑多路召回。</p>
+</li>
+</ul>
+<p><img src="/img/note/202402041757.png"></p>
+<h2 id="召回模型的演化关系"><a href="#召回模型的演化关系" class="headerlink" title="召回模型的演化关系"></a>召回模型的演化关系</h2><ul>
+<li>召回模型经历了传统协同过滤到embedding模型化召回的演变，下图是召回技术的演变图。</li>
+</ul>
+<p><img src="/img/note/202402041801.jpeg"></p>
+<h3 id="传统召回算法"><a href="#传统召回算法" class="headerlink" title="传统召回算法"></a>传统召回算法</h3><h4 id="CF（Collaborative-Filtering，协同过滤）"><a href="#CF（Collaborative-Filtering，协同过滤）" class="headerlink" title="CF（Collaborative Filtering，协同过滤）"></a>CF（Collaborative Filtering，协同过滤）</h4><ul>
+<li><p><strong>UserCF直观上比较好理解，就是找一群相似用户，把相似用户喜欢的物品推荐给目标用户</strong>。UserCF更适合新闻推荐场景。在新闻推荐场景中，新闻的兴趣点一般比较分散，比如虎嗅的新闻一般受众群体是从事IT的人，而UserCF可以快速找到都是从事IT的人群，然后把虎嗅的新闻推荐给自己。</p>
+</li>
+<li><p><strong>ItemCF是基于物品相似度进行推荐的协同过滤算法。具体讲，通过计算Item之间的相似度，得到Item相似度矩阵，然后找到用户历史正反馈物品的相似物品进行排序和推荐</strong>。ItemCF更适合电商或视频推荐场景。在电商和视频推荐场景中，都有一个共同点，用户的兴趣比较稳定。比如在电商场景，ItemCF可以推荐和兴趣点相似的商品，比如以前经常购买球鞋的人，可以推荐球衣球裤。</p>
+</li>
+</ul>
+<p><img src="/img/note/202402041802.png"></p>
+<h4 id="基于矩阵分解的召回算法"><a href="#基于矩阵分解的召回算法" class="headerlink" title="基于矩阵分解的召回算法"></a>基于矩阵分解的召回算法</h4><ul>
+<li>分解出来的用户矩阵和物品矩阵计算用户和物品的相似度，但是计算复杂度高，对于物品上百万的互联网行业是无法接受的。另外，SVD对于稀疏的共现矩阵也不友好，需要人为填充缺失值，而互联行业用户行为大多是比较稀疏的。</li>
+</ul>
+<p><img src="/img/note/202402041803.png"></p>
+<h4 id="传统召回算法总结"><a href="#传统召回算法总结" class="headerlink" title="传统召回算法总结"></a>传统召回算法总结</h4><ul>
+<li>传统召回算法有其简单、可解释性强的特点，但是也有自身的局限性。协同过滤和矩阵分解都没有加入用户、物品和上下文相关的特征，也没有考虑用户行为之间的相关性。</li>
+</ul>
+<h3 id="Embedding召回基本框架"><a href="#Embedding召回基本框架" class="headerlink" title="Embedding召回基本框架"></a>Embedding召回基本框架</h3><h4 id="i2i-召回"><a href="#i2i-召回" class="headerlink" title="i2i 召回"></a>i2i 召回</h4><ul>
+<li>离线根据用户历史行为训练召回模型，输出item embedding，存储到数据库中</li>
+<li>线上接受用户请求，根据用户历史行为，从数据库从查找对应的embedding，然后检索相似度最高的n个item，最后将Top n召回结果返回给后面的排序模块。</li>
+</ul>
+<p><img src="/img/note/202402082035.png"></p>
+<h4 id="u2i-召回"><a href="#u2i-召回" class="headerlink" title="u2i 召回"></a>u2i 召回</h4><ul>
+<li>如果召回模型能够直接推断出user embedding和item embedding，那么就可以直接计算二者的相似度，然后进行召回。</li>
+<li>在u2i召回框架中，有时考虑到用户规模太大，不方便存储，可以在线上召回的时候，直接通过模型请求获取user embedding，然后再检索相似item。</li>
+<li>u2i的召回框架，和i2i相比，主要区别在于u2i可以直接基于user embedding进行检索。</li>
+</ul>
+<p><img src="/img/note/202402082036.png"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Xinhao Zhong</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/02/04/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%8F%AC%E5%9B%9E%E7%AF%87/">http://example.com/2024/02/04/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E5%8F%AC%E5%9B%9E%E7%AF%87/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Xinhao Zhong</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/cover.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/02/14/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%87%8F%E5%8C%96%E6%8A%80%E6%9C%AF/" title="大模型量化技术"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">大模型量化技术</div></div></a></div><div class="next-post pull-right"><a href="/2024/02/04/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/" title="预训练模型"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">预训练模型</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Xinhao Zhong</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">18</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Twxwx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">A Little Bit More</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AC%E5%9B%9E%E5%B1%82%E7%9A%84%E4%BD%9C%E7%94%A8%E5%92%8C%E6%84%8F%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text">召回层的作用和意义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AC%E5%9B%9E%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%BC%94%E5%8C%96%E5%85%B3%E7%B3%BB"><span class="toc-number">2.</span> <span class="toc-text">召回模型的演化关系</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E5%8F%AC%E5%9B%9E%E7%AE%97%E6%B3%95"><span class="toc-number">2.1.</span> <span class="toc-text">传统召回算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#CF%EF%BC%88Collaborative-Filtering%EF%BC%8C%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4%EF%BC%89"><span class="toc-number">2.1.1.</span> <span class="toc-text">CF（Collaborative Filtering，协同过滤）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3%E7%9A%84%E5%8F%AC%E5%9B%9E%E7%AE%97%E6%B3%95"><span class="toc-number">2.1.2.</span> <span class="toc-text">基于矩阵分解的召回算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E5%8F%AC%E5%9B%9E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93"><span class="toc-number">2.1.3.</span> <span class="toc-text">传统召回算法总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Embedding%E5%8F%AC%E5%9B%9E%E5%9F%BA%E6%9C%AC%E6%A1%86%E6%9E%B6"><span class="toc-number">2.2.</span> <span class="toc-text">Embedding召回基本框架</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#i2i-%E5%8F%AC%E5%9B%9E"><span class="toc-number">2.2.1.</span> <span class="toc-text">i2i 召回</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#u2i-%E5%8F%AC%E5%9B%9E"><span class="toc-number">2.2.2.</span> <span class="toc-text">u2i 召回</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/02/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%98%BE%E5%AD%98%E5%88%86%E6%9E%90/" title="大模型显存分析">大模型显存分析</a><time datetime="2024-08-02T09:47:03.000Z" title="发表于 2024-08-02 17:47:03">2024-08-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%8E%B1%E6%96%87%E6%96%AF%E5%9D%A6%E8%B7%9D%E7%A6%BB/" title="莱文斯坦距离">莱文斯坦距离</a><time datetime="2024-08-01T13:47:34.000Z" title="发表于 2024-08-01 21:47:34">2024-08-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/29/%E9%9D%A2%E8%AF%95%E7%9B%B8%E5%85%B3/%E9%9D%A2%E8%AF%95%E9%A2%98/" title="面试题">面试题</a><time datetime="2024-07-29T12:51:04.000Z" title="发表于 2024-07-29 20:51:04">2024-07-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/29/%E9%9D%A2%E8%AF%95%E7%9B%B8%E5%85%B3/%E9%9D%A2%E8%AF%95%E6%99%BA%E5%8A%9B%E9%A2%98/" title="面试智力题">面试智力题</a><time datetime="2024-07-29T12:50:59.000Z" title="发表于 2024-07-29 20:50:59">2024-07-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/25/%E5%A4%A7%E6%A8%A1%E5%9E%8B/CodeGeeX/" title="CodeGeeX">CodeGeeX</a><time datetime="2024-07-25T07:07:27.000Z" title="发表于 2024-07-25 15:07:27">2024-07-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Xinhao Zhong</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

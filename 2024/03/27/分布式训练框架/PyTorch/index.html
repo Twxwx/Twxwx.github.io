@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>PyTorch | Xinhao Zhong</title><meta name="author" content="Xinhao Zhong"><meta name="copyright" content="Xinhao Zhong"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="简介 PyTorch 分为 torch.nn.parallel.DataParallel (DP) 和 torch.nn.parallel.DistributedDataParallel (DDP)。  DDP与DP的区别 DP是单进程多线程的，只能在单机上工作；DDP是多进程的，可以在多级多卡上工作。DP通常比DDP慢，主要原因有： DP是单进程的，受到GIL的限制； DP每个step都需要拷贝">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PyTorch">
+<meta property="og:url" content="http://example.com/2024/03/27/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/PyTorch/index.html">
+<meta property="og:site_name" content="Xinhao Zhong">
+<meta property="og:description" content="简介 PyTorch 分为 torch.nn.parallel.DataParallel (DP) 和 torch.nn.parallel.DistributedDataParallel (DDP)。  DDP与DP的区别 DP是单进程多线程的，只能在单机上工作；DDP是多进程的，可以在多级多卡上工作。DP通常比DDP慢，主要原因有： DP是单进程的，受到GIL的限制； DP每个step都需要拷贝">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/cover.jpeg">
+<meta property="article:published_time" content="2024-03-27T04:01:28.000Z">
+<meta property="article:modified_time" content="2024-08-02T15:03:21.190Z">
+<meta property="article:author" content="Xinhao Zhong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/cover.jpeg"><link rel="shortcut icon" href="/img/crucifix.png"><link rel="canonical" href="http://example.com/2024/03/27/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/PyTorch/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'PyTorch',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-08-02 23:03:21'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">65</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/cover.jpeg')"><nav id="nav"><span id="blog-info"><a href="/" title="Xinhao Zhong"><span class="site-name">Xinhao Zhong</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">PyTorch</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-27T04:01:28.000Z" title="发表于 2024-03-27 12:01:28">2024-03-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-08-02T15:03:21.190Z" title="更新于 2024-08-02 23:03:21">2024-08-02</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/">分布式训练框架</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="PyTorch"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><ul>
+<li>PyTorch 分为 torch.nn.parallel.DataParallel (DP) 和 torch.nn.parallel.DistributedDataParallel (DDP)。</li>
+</ul>
+<h2 id="DDP与DP的区别"><a href="#DDP与DP的区别" class="headerlink" title="DDP与DP的区别"></a>DDP与DP的区别</h2><ul>
+<li>DP是单进程多线程的，只能在单机上工作；DDP是多进程的，可以在多级多卡上工作。DP通常比DDP慢，主要原因有：<ol>
+<li>DP是单进程的，受到GIL的限制；</li>
+<li>DP每个step都需要拷贝模型，以及划分数据和收集输出；</li>
+</ol>
+</li>
+<li>DDP可以与模型并行相结合；</li>
+<li>DP的通信成本随着卡数线性增长，DDP支持Ring-AllReduce，通信成本是固定的。</li>
+</ul>
+<h2 id="DP模式"><a href="#DP模式" class="headerlink" title="DP模式"></a>DP模式</h2><ul>
+<li>DP是较简单的一种数据并行方式，直接将模型复制到多个GPU上并行计算，每个GPU计算batch中的一部分数据，各自完成前向和反向后，将梯度汇总到主GPU上。其基本流程：<ol>
+<li>加载模型、数据至内存；</li>
+<li>创建DP模型；</li>
+<li>DP模型的forward过程：<ol>
+<li>一个batch的数据均分到不同device上；</li>
+<li>为每个device复制一份模型；</li>
+<li>至此，每个device上有模型和一份数据，并行进行前向传播；</li>
+<li>收集各个device上的输出；</li>
+</ol>
+</li>
+<li>每个device上的模型反向传播后，收集梯度到主device上，更新主device上的模型，将模型广播到其他device上；</li>
+<li>3-4循环。</li>
+</ol>
+</li>
+<li>在DP中，只有一个主进程，主进程下有多个线程，每个线程管理一个device的训练。因此，DP中内存中只存在一份数据，各个线程间是共享这份数据的。DP和Parameter Server的方式很像。</li>
+</ul>
+<h2 id="DDP模式"><a href="#DDP模式" class="headerlink" title="DDP模式"></a>DDP模式</h2><ul>
+<li>DDP，顾名思义，即分布式的数据并行，每个进程独立进行训练，每个进程会加载完整的数据，但是读取不重叠的数据。</li>
+<li>DDP执行流程为：<ul>
+<li><p>准备阶段</p>
+<ul>
+<li>环境初始化<ul>
+<li>在各张卡上初始化进程并建立进程间通信，对应代码：init_process_group。</li>
+</ul>
+</li>
+<li>模型广播  <ul>
+<li>将模型parameter、buffer广播到各节点，对应代码：model &#x3D; DDP(model).to(local_rank)。</li>
+</ul>
+</li>
+<li>创建管理器reducer，给每个参数注册梯度平均hook。</li>
+</ul>
+</li>
+<li><p>准备数据</p>
+<ul>
+<li>加载数据集，创建适用于分布式场景的数据采样器，以防不同节点使用的数据不重叠。</li>
+</ul>
+</li>
+<li><p>训练阶段</p>
+<ul>
+<li>前向传播<ul>
+<li>同步各进程状态（parameter和buffer）；</li>
+<li>当DDP参数find_unused_parameter为true时，其会在forward结束时，启动一个回溯，标记未用到的参数，提前将这些设置为ready。</li>
+</ul>
+</li>
+<li>计算梯度<ul>
+<li>reducer外面：各进程各自开始反向计算梯度；</li>
+<li>reducer外面：当某个参数的梯度计算好了，其之前注册的grad hook就会触发，在reducer里把这个参数的状态标记为ready；</li>
+<li>reducer里面：当某个bucket的所有参数都是ready时，reducer开始对这个bucket的所有参数开始一个异步的all-reduce梯度平均操作；</li>
+<li>reducer里面：当所有bucket的梯度平均都结束后，reducer把得到的平均梯度正式写入到parameter.grad里。</li>
+</ul>
+</li>
+<li>优化器应用梯度更新参数。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Xinhao Zhong</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/03/27/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/PyTorch/">http://example.com/2024/03/27/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83%E6%A1%86%E6%9E%B6/PyTorch/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Xinhao Zhong</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/cover.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/03/29/%E5%A4%A7%E6%A8%A1%E5%9E%8B/Bloom/" title="the BigScience Large Open-science Open-access Multilingual Language Model (BLOOM)"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">the BigScience Large Open-science Open-access Multilingual Language Model (BLOOM)</div></div></a></div><div class="next-post pull-right"><a href="/2024/03/16/%E5%90%91%E9%87%8F%E6%A3%80%E7%B4%A2/%E5%90%91%E9%87%8F%E6%A3%80%E7%B4%A2/" title="向量检索"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">向量检索</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Xinhao Zhong</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">65</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Twxwx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">A Little Bit More</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DDP%E4%B8%8EDP%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">2.</span> <span class="toc-text">DDP与DP的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DP%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.</span> <span class="toc-text">DP模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DDP%E6%A8%A1%E5%BC%8F"><span class="toc-number">4.</span> <span class="toc-text">DDP模式</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/10/23/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%93%E5%90%88%E5%A4%A7%E6%A8%A1%E5%9E%8B/" title="知识图谱结合大模型">知识图谱结合大模型</a><time datetime="2024-10-23T12:27:01.000Z" title="发表于 2024-10-23 20:27:01">2024-10-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/10/09/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" title="大模型存在问题及解决方法">大模型存在问题及解决方法</a><time datetime="2024-10-09T15:33:49.000Z" title="发表于 2024-10-09 23:33:49">2024-10-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/29/CV/DINO/" title="DINO">DINO</a><time datetime="2024-09-29T08:39:17.000Z" title="发表于 2024-09-29 16:39:17">2024-09-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/22/NLP/RNN%E5%92%8CLSTM/" title="RNN和LSTM">RNN和LSTM</a><time datetime="2024-09-22T08:36:24.000Z" title="发表于 2024-09-22 16:36:24">2024-09-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/21/%E6%90%9C%E5%B9%BF%E6%8E%A8/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95-%E7%B2%BE%E6%8E%92/" title="推荐算法-精排">推荐算法-精排</a><time datetime="2024-09-21T15:25:58.000Z" title="发表于 2024-09-21 23:25:58">2024-09-21</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Xinhao Zhong</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

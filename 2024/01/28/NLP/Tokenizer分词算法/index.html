@@ -1,0 +1,271 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Tokenizer分词算法 | Xinhao Zhong</title><meta name="author" content="Xinhao Zhong"><meta name="copyright" content="Xinhao Zhong"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="定义 Tokenizer 可以将文本转换成独立的 token 列表，进而转换成输入的向量成为计算机可以理解的输入形式。  概述 根据不同的切分粒度可以把tokenizer分为: 基于词的切分，基于字的切分和基于subword的切分。 基于subword的切分是目前的主流切分方式。 subword的切分包括: BPE(&#x2F;BBPE), WordPiece 和 Unigram三种分词模型。其中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tokenizer分词算法">
+<meta property="og:url" content="http://example.com/2024/01/28/NLP/Tokenizer%E5%88%86%E8%AF%8D%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="Xinhao Zhong">
+<meta property="og:description" content="定义 Tokenizer 可以将文本转换成独立的 token 列表，进而转换成输入的向量成为计算机可以理解的输入形式。  概述 根据不同的切分粒度可以把tokenizer分为: 基于词的切分，基于字的切分和基于subword的切分。 基于subword的切分是目前的主流切分方式。 subword的切分包括: BPE(&#x2F;BBPE), WordPiece 和 Unigram三种分词模型。其中">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/cover.jpeg">
+<meta property="article:published_time" content="2024-01-28T08:17:23.000Z">
+<meta property="article:modified_time" content="2024-04-07T14:16:37.090Z">
+<meta property="article:author" content="Xinhao Zhong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/cover.jpeg"><link rel="shortcut icon" href="/img/crucifix.png"><link rel="canonical" href="http://example.com/2024/01/28/NLP/Tokenizer%E5%88%86%E8%AF%8D%E7%AE%97%E6%B3%95/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Tokenizer分词算法',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-04-07 22:16:37'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">65</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/cover.jpeg')"><nav id="nav"><span id="blog-info"><a href="/" title="Xinhao Zhong"><span class="site-name">Xinhao Zhong</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Tokenizer分词算法</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-01-28T08:17:23.000Z" title="发表于 2024-01-28 16:17:23">2024-01-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-04-07T14:16:37.090Z" title="更新于 2024-04-07 22:16:37">2024-04-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NLP/">NLP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Tokenizer分词算法"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>Tokenizer 可以将文本转换成独立的 token 列表，进而转换成输入的向量成为计算机可以理解的输入形式。</li>
+</ul>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul>
+<li>根据不同的切分粒度可以把tokenizer分为: 基于词的切分，基于字的切分和基于subword的切分。 基于subword的切分是目前的主流切分方式。</li>
+<li>subword的切分包括: BPE(&#x2F;BBPE), WordPiece 和 Unigram三种分词模型。其中WordPiece可以认为是一种特殊的BPE。</li>
+<li>完整的分词流程包括：文本归一化，预切分，基于分词模型的切分，后处理。</li>
+<li>SentencePiece是一个分词工具，内置BEP等多种分词方法，基于Unicode编码并且将空格视为特殊的token。是当前大模型的主流分词方案。</li>
+</ul>
+<p><img src="/img/note/202401291028.png"></p>
+<h2 id="基于subword的切分"><a href="#基于subword的切分" class="headerlink" title="基于subword的切分"></a>基于subword的切分</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>基于subword的切分能很好平衡基于词切分和基于字切分的优缺点。基于subword的切分包括：BPE，WordPiece 和 Unigram 三种分词模型。</li>
+</ul>
+<ol>
+<li>词表规模适中，解码效率较高</li>
+<li>不存在UNK，信息不丢失</li>
+<li>能学习到词缀之间的关系</li>
+</ol>
+<ul>
+<li>基于词的切分，会造成:</li>
+</ul>
+<ol>
+<li>词表规模过大</li>
+<li>一定会存在UNK，造成信息丢失</li>
+<li>不能学习到词缀之间的关系，例如：dog与dogs，happy与unhappy</li>
+</ol>
+<ul>
+<li>基于字的切分，会造成:</li>
+</ul>
+<ol>
+<li>每个token的信息密度低</li>
+<li>序列过长，解码效率很低</li>
+</ol>
+<h3 id="基本切分原则"><a href="#基本切分原则" class="headerlink" title="基本切分原则"></a>基本切分原则</h3><ol>
+<li>高频词依旧切分成完整的整词</li>
+<li>低频词被切分成有意义的子词，例如 dogs &#x3D;&gt; [dog, ##s]</li>
+</ol>
+<h2 id="切分的一般流程"><a href="#切分的一般流程" class="headerlink" title="切分的一般流程"></a>切分的一般流程</h2><ul>
+<li>Tokenizer包括训练和推理两个环节。训练阶段指得是从语料中获取一个分词器模型。推理阶段指的是给定一个句子，基于分词模型切分成一连串的token。基本的流程如图所示，包括归一化，预分词，基于分词模型的切分，后处理4个步骤。</li>
+</ul>
+<p><img src="/img/note/202401291107.png"></p>
+<h3 id="归一化"><a href="#归一化" class="headerlink" title="归一化"></a>归一化</h3><ul>
+<li>这是最基础的文本清洗，包括删除多余的换行和空格，转小写，移除音调等。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">input: Héllò hôw are ü?</span><br><span class="line">normalization: hello how are u?</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="预分词"><a href="#预分词" class="headerlink" title="预分词"></a>预分词</h3><ul>
+<li>预分词阶段会把句子切分成更小的词单元。可以基于空格或者标点进行切分。 不同的tokenizer的实现细节是不一样的。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">input: Hello, how are  you?</span><br><span class="line"></span><br><span class="line">pre-tokenize:</span><br><span class="line">[BERT]: [(<span class="string">&#x27;Hello&#x27;</span>, (0, 5)), (<span class="string">&#x27;,&#x27;</span>, (5, 6)), (<span class="string">&#x27;how&#x27;</span>, (7, 10)), (<span class="string">&#x27;are&#x27;</span>, (11, 14)), (<span class="string">&#x27;you&#x27;</span>, (16, 19)), (<span class="string">&#x27;?&#x27;</span>, (19, 20))]</span><br><span class="line"></span><br><span class="line">[GPT2]: [(<span class="string">&#x27;Hello&#x27;</span>, (0, 5)), (<span class="string">&#x27;,&#x27;</span>, (5, 6)), (<span class="string">&#x27;Ġhow&#x27;</span>, (6, 10)), (<span class="string">&#x27;Ġare&#x27;</span>, (10, 14)), (<span class="string">&#x27;Ġ&#x27;</span>, (14, 15)), (<span class="string">&#x27;Ġyou&#x27;</span>, (15, 19)), (<span class="string">&#x27;?&#x27;</span>, (19, 20))]</span><br><span class="line"></span><br><span class="line">[t5]: [(<span class="string">&#x27;▁Hello,&#x27;</span>, (0, 6)), (<span class="string">&#x27;▁how&#x27;</span>, (7, 10)), (<span class="string">&#x27;▁are&#x27;</span>, (11, 14)), (<span class="string">&#x27;▁you?&#x27;</span>, (16, 20))] </span><br></pre></td></tr></table></figure></li>
+<li>可以看到BERT的tokenizer就是直接基于空格和标点进行切分。</li>
+<li>GPT2也是基于空格和标签，但是空格会保留成特殊字符“Ġ”。</li>
+<li>T5则只基于空格进行切分，标点不会切分。并且空格会保留成特殊字符”▁”，并且句子开头也会添加特殊字符”▁”。</li>
+</ul>
+<h3 id="基于分词模型的切分"><a href="#基于分词模型的切分" class="headerlink" title="基于分词模型的切分"></a>基于分词模型的切分</h3><ul>
+<li>这里指的就是不同分词模型具体的切分方式。分词模型包括：BPE，WordPiece 和 Unigram 三种分词模型。</li>
+</ul>
+<h3 id="后处理"><a href="#后处理" class="headerlink" title="后处理"></a>后处理</h3><ul>
+<li>后处理阶段会包括一些特殊的分词逻辑，例如添加sepcial token：[CLS],[SEP]等。</li>
+</ul>
+<h2 id="BPE"><a href="#BPE" class="headerlink" title="BPE"></a>BPE</h2><h3 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h3><ul>
+<li>Byte-Pair Encoding(BPE)是最广泛采用的subword分词器。<ul>
+<li>训练方法：从字符级的小词表出发，训练产生合并规则以及一个词表</li>
+<li>编码方法：将文本切分成字符，再应用训练阶段获得的合并规则</li>
+<li>经典模型：GPT, GPT-2, RoBERTa, BART, LLaMA, ChatGLM等</li>
+</ul>
+</li>
+</ul>
+<h3 id="训练流程"><a href="#训练流程" class="headerlink" title="训练流程"></a>训练流程</h3><ul>
+<li>在训练环节，目标是给定语料，通过训练算法，生成合并规则和词表。BPE算法是从一个字符级别的词表为基础，合并pair并添加到词表中，逐步形成大词表。合并规则为选择相邻pair词频最大的进行合并。</li>
+</ul>
+<h3 id="推理阶段"><a href="#推理阶段" class="headerlink" title="推理阶段"></a>推理阶段</h3><ul>
+<li>在推理阶段，给定一个句子，我们需要将其切分成一个token的序列。具体实现上需要先对句子进行预分词并切分成字符级别的序列，然后根据合并规则进行合并。</li>
+</ul>
+<h2 id="BBPE"><a href="#BBPE" class="headerlink" title="BBPE"></a>BBPE</h2><h3 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h3><ul>
+<li><p>Byte-level BPE (BBPE)算法是上面BPE算法的进一步升级。核心思想是用byte来构建最基础的词表而不是字符。首先将文本按照UTF-8进行编码，每个字符在UTF-8的表示中占据1-4个byte。在byte序列上再使用BPE算法，进行byte level的相邻合并。</p>
+</li>
+<li><p>通过这种方式可以更好的处理跨语言和不常见字符的特殊问题(例如，颜文字)，相比传统的BPE更节省词表空间（同等词表大小效果更好），每个token也能获得更充分的训练。但是在解码阶段，一个byte序列可能解码后不是一个合法的字符序列，这里需要采用动态规划的算法进行解码，使其能解码出尽可能多的合法字符</p>
+</li>
+</ul>
+<h2 id="WordPiece"><a href="#WordPiece" class="headerlink" title="WordPiece"></a>WordPiece</h2><h3 id="概述-3"><a href="#概述-3" class="headerlink" title="概述"></a>概述</h3><ul>
+<li>WordPiece分词与BPE非常类似，只是在训练阶段合并pair的策略不是pair的频率而是互信息。</li>
+</ul>
+<p><img src="/img/note/202401291448.png"></p>
+<ul>
+<li>一个pair的频率很高，但是pair的一部分的频率更高，这时候不一定需要进行该pair的合并。而如果一个pair的频率很高，并且这个pair的两个部分都是只出现在这个pair中，就说明这个pair很值得合并。<ul>
+<li>训练方法：从字符级的小词表出发，训练产生合并规则以及一个词表</li>
+<li>编码方法：将文本切分成词，对每个词在词表中进行最大前向匹配</li>
+<li>经典模型：BERT及其系列DistilBERT，MobileBERT等</li>
+</ul>
+</li>
+</ul>
+<h3 id="训练流程-1"><a href="#训练流程-1" class="headerlink" title="训练流程"></a>训练流程</h3><ul>
+<li><p>在训练环节，给定语料，通过训练算法，生成最终的词表。WordPiece算法也是从一个字符级别的词表为基础，逐步扩充成大词表。合并规则为选择相邻pair互信息最大的进行合并。</p>
+</li>
+<li><p>在初始化字符级别词表的时候，如果字符不是不一个词的开始，需要添加上特殊字符”##”</p>
+</li>
+</ul>
+<h3 id="推理阶段-1"><a href="#推理阶段-1" class="headerlink" title="推理阶段"></a>推理阶段</h3><ul>
+<li>在推理阶段，给定一个句子，需要将其切分成一个token的序列。具体实现上需要先对句子进行预分词，然后对每个词进行在词表中进行最大前向的匹配。如果词表中不存在则为UNK。</li>
+</ul>
+<h2 id="Unigram"><a href="#Unigram" class="headerlink" title="Unigram"></a>Unigram</h2><h3 id="概述-4"><a href="#概述-4" class="headerlink" title="概述"></a>概述</h3><ul>
+<li>Unigram分词与BPE和WordPiece不同，是基于一个大词表逐步裁剪成一个小词表。通过Unigram语言模型计算删除不同subword造成的损失来衡量subword的重要性，保留重要性较高的子词。<ul>
+<li>训练方法：从包含字符和全部子词的大词表出发，通过训练逐步裁剪出一个小词表，并且每个词都有自己的分数。</li>
+<li>编码方法：将文本切分成词，对每个词基于Viterbi算法求解出最佳解码路径。</li>
+<li>经典模型：AlBERT, T5, mBART, Big Bird, XLNet</li>
+</ul>
+</li>
+</ul>
+<h3 id="训练流程-2"><a href="#训练流程-2" class="headerlink" title="训练流程"></a>训练流程</h3><ul>
+<li>在训练环节，目标是给定语料，通过训练算法，生成最终的词表，并且每个词有自己的概率值。Unigram算法是从大词表为基础，逐步裁剪成小词表。裁剪规则是根据Unigram语言模型的打分依次裁剪重要度相对较低的词。</li>
+</ul>
+<h3 id="推理阶段-2"><a href="#推理阶段-2" class="headerlink" title="推理阶段"></a>推理阶段</h3><ul>
+<li>在推理阶段，给定一个句子，需要将其切分成一个token的序列。具体实现上先对句子进行预分词，然后对每个词基于Viterbi算法进行解码。</li>
+</ul>
+<h2 id="SentencePiece-分词工具"><a href="#SentencePiece-分词工具" class="headerlink" title="SentencePiece 分词工具"></a>SentencePiece 分词工具</h2><ul>
+<li>内置BPE，Unigram，char和word的分词方法</li>
+<li>无需预分词，以unicode方式直接编码整个句子，空格会被特殊编码为▁</li>
+<li>相比传统实现进行优化，分词速度速度更快</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Xinhao Zhong</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/01/28/NLP/Tokenizer%E5%88%86%E8%AF%8D%E7%AE%97%E6%B3%95/">http://example.com/2024/01/28/NLP/Tokenizer%E5%88%86%E8%AF%8D%E7%AE%97%E6%B3%95/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Xinhao Zhong</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/cover.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/01/29/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%9E%82%E7%9B%B4%E5%A4%A7%E6%A8%A1%E5%9E%8B/" title="垂直大模型"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">垂直大模型</div></div></a></div><div class="next-post pull-right"><a href="/2024/01/28/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" title="大模型推理优化技术"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">大模型推理优化技术</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Xinhao Zhong</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">65</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Twxwx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">A Little Bit More</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">2.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Esubword%E7%9A%84%E5%88%87%E5%88%86"><span class="toc-number">3.</span> <span class="toc-text">基于subword的切分</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">3.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%88%87%E5%88%86%E5%8E%9F%E5%88%99"><span class="toc-number">3.2.</span> <span class="toc-text">基本切分原则</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E5%88%86%E7%9A%84%E4%B8%80%E8%88%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">切分的一般流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%92%E4%B8%80%E5%8C%96"><span class="toc-number">4.1.</span> <span class="toc-text">归一化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%84%E5%88%86%E8%AF%8D"><span class="toc-number">4.2.</span> <span class="toc-text">预分词</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%88%86%E8%AF%8D%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%88%87%E5%88%86"><span class="toc-number">4.3.</span> <span class="toc-text">基于分词模型的切分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E5%A4%84%E7%90%86"><span class="toc-number">4.4.</span> <span class="toc-text">后处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BPE"><span class="toc-number">5.</span> <span class="toc-text">BPE</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0-1"><span class="toc-number">5.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B"><span class="toc-number">5.2.</span> <span class="toc-text">训练流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E7%90%86%E9%98%B6%E6%AE%B5"><span class="toc-number">5.3.</span> <span class="toc-text">推理阶段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BBPE"><span class="toc-number">6.</span> <span class="toc-text">BBPE</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0-2"><span class="toc-number">6.1.</span> <span class="toc-text">概述</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WordPiece"><span class="toc-number">7.</span> <span class="toc-text">WordPiece</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0-3"><span class="toc-number">7.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B-1"><span class="toc-number">7.2.</span> <span class="toc-text">训练流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E7%90%86%E9%98%B6%E6%AE%B5-1"><span class="toc-number">7.3.</span> <span class="toc-text">推理阶段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Unigram"><span class="toc-number">8.</span> <span class="toc-text">Unigram</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0-4"><span class="toc-number">8.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B-2"><span class="toc-number">8.2.</span> <span class="toc-text">训练流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E7%90%86%E9%98%B6%E6%AE%B5-2"><span class="toc-number">8.3.</span> <span class="toc-text">推理阶段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SentencePiece-%E5%88%86%E8%AF%8D%E5%B7%A5%E5%85%B7"><span class="toc-number">9.</span> <span class="toc-text">SentencePiece 分词工具</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/10/23/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%93%E5%90%88%E5%A4%A7%E6%A8%A1%E5%9E%8B/" title="知识图谱结合大模型">知识图谱结合大模型</a><time datetime="2024-10-23T12:27:01.000Z" title="发表于 2024-10-23 20:27:01">2024-10-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/10/09/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" title="大模型存在问题及解决方法">大模型存在问题及解决方法</a><time datetime="2024-10-09T15:33:49.000Z" title="发表于 2024-10-09 23:33:49">2024-10-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/29/CV/DINO/" title="DINO">DINO</a><time datetime="2024-09-29T08:39:17.000Z" title="发表于 2024-09-29 16:39:17">2024-09-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/22/NLP/RNN%E5%92%8CLSTM/" title="RNN和LSTM">RNN和LSTM</a><time datetime="2024-09-22T08:36:24.000Z" title="发表于 2024-09-22 16:36:24">2024-09-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/21/%E6%90%9C%E5%B9%BF%E6%8E%A8/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95-%E7%B2%BE%E6%8E%92/" title="推荐算法-精排">推荐算法-精排</a><time datetime="2024-09-21T15:25:58.000Z" title="发表于 2024-09-21 23:25:58">2024-09-21</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Xinhao Zhong</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

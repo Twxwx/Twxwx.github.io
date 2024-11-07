@@ -1,0 +1,246 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>混合专家 | Xinhao Zhong</title><meta name="author" content="Xinhao Zhong"><meta name="copyright" content="Xinhao Zhong"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="概述 MoE 已经变得十分普遍，新的大型语言模型：GPT-4、Gemini 1.5、Mixtral 8x7B 或 Jamba 都是 MoE 模型。  知识的稀疏性 MoE（Mixture of Experts）是一种人工智能训练技术。它实质上将神经网络的某些部分“分解”为不同的部分，将这些被分解的部分称为“专家”。  这种技术出现的原因有三个主要方面：  神经网络的稀疏性： 在特定层中，神经网络可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="混合专家">
+<meta property="og:url" content="http://example.com/2024/04/30/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E6%B7%B7%E5%90%88%E4%B8%93%E5%AE%B6/index.html">
+<meta property="og:site_name" content="Xinhao Zhong">
+<meta property="og:description" content="概述 MoE 已经变得十分普遍，新的大型语言模型：GPT-4、Gemini 1.5、Mixtral 8x7B 或 Jamba 都是 MoE 模型。  知识的稀疏性 MoE（Mixture of Experts）是一种人工智能训练技术。它实质上将神经网络的某些部分“分解”为不同的部分，将这些被分解的部分称为“专家”。  这种技术出现的原因有三个主要方面：  神经网络的稀疏性： 在特定层中，神经网络可">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/cover.jpeg">
+<meta property="article:published_time" content="2024-04-30T15:25:28.000Z">
+<meta property="article:modified_time" content="2024-07-02T13:06:10.466Z">
+<meta property="article:author" content="Xinhao Zhong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/cover.jpeg"><link rel="shortcut icon" href="/img/crucifix.png"><link rel="canonical" href="http://example.com/2024/04/30/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E6%B7%B7%E5%90%88%E4%B8%93%E5%AE%B6/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '混合专家',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-07-02 21:06:10'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">65</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/cover.jpeg')"><nav id="nav"><span id="blog-info"><a href="/" title="Xinhao Zhong"><span class="site-name">Xinhao Zhong</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">混合专家</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-04-30T15:25:28.000Z" title="发表于 2024-04-30 23:25:28">2024-04-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-07-02T13:06:10.466Z" title="更新于 2024-07-02 21:06:10">2024-07-02</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="混合专家"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul>
+<li>MoE 已经变得十分普遍，新的大型语言模型：GPT-4、Gemini 1.5、Mixtral 8x7B 或 Jamba 都是 MoE 模型。</li>
+</ul>
+<h2 id="知识的稀疏性"><a href="#知识的稀疏性" class="headerlink" title="知识的稀疏性"></a>知识的稀疏性</h2><ul>
+<li><p>MoE（Mixture of Experts）是一种人工智能训练技术。它实质上将神经网络的某些部分“分解”为不同的部分，将这些被分解的部分称为“专家”。</p>
+</li>
+<li><p>这种技术出现的原因有三个主要方面：</p>
+<ol>
+<li><p>神经网络的稀疏性： 在特定层中，神经网络可能会变得非常稀疏，即某些神经元的激活频率远低于其他神经元。换句话说，很多神经元并非每次都会被使用到，这和人类大脑中的神经元是类似的。</p>
+</li>
+<li><p>神经元的多语义性： 神经元的设计使其具有多语义性，这意味着它们可以同时处理多个主题或概念。比如，一个神经元可能对”苹果”、”香蕉”和”橙子”都有反应，这些词代表着不同的实体。</p>
+</li>
+<li><p>计算资源的有限性：模型规模是提升模型性能的关键因素之一。而不管在什么阶段，资源一定是有限的，在有限的计算资源预算下，用更少的训练步数训练一个更大的模型，往往比用更多的步数训练一个较小的模型效果更佳。</p>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="神经元的稀疏性"><a href="#神经元的稀疏性" class="headerlink" title="神经元的稀疏性"></a>神经元的稀疏性</h3><ul>
+<li><p>神经网络实际上对于它们所做的大多数预测来说都太大了，每次预测都要运行整个网络，但实际上模型中只有很小的一部分能够发挥作用。而且模型的规模越大，其稀疏性也越强。大型模型在处理输入时激活的神经元占总体的比例更小，例如，大型模型中80%的输入只激活少于3%的神经元。</p>
+</li>
+<li><p>为了解决稀疏性激活问题，提出了MoEfication方法，即通过将FFNs分割成多个专家，并构建专家路由器（Expert routers）来决定对每个输入使用哪些专家，从而提高模型的效率和性能。</p>
+</li>
+</ul>
+<h3 id="神经元的多义性"><a href="#神经元的多义性" class="headerlink" title="神经元的多义性"></a>神经元的多义性</h3><ul>
+<li>神经元不专注于一个单一的主题，而是专注于许多主题。而且重要的是，它们在语义上并不相关。举个例子来说，在神经网络数十亿个神经元中的一个神经元可能每次在输入主题涉及“苹果”被激活，而当输入主题涉及“电话”时，这个神经元也可能被激活。这使得神经网络难以解释，单个神经元必须精通各种彼此几乎毫无关系的主题。由于知识范围十分广泛，这些神经元很难获取知识。更糟糕的是，学习曲线可能相互矛盾，学习一个主题的更多知识可能会影响神经元获取另一个主题知识的能力。</li>
+</ul>
+<h3 id="计算资源的有限性"><a href="#计算资源的有限性" class="headerlink" title="计算资源的有限性"></a>计算资源的有限性</h3><ul>
+<li>由于神经网络的稀疏性，以及当前Transformer的二次障碍问题，大模型网络中进行了大量不必要的计算，使得更大的 LLM 成为世界上最低效和最耗能的系统之一。但除了不受控制的消耗之外，针对每个预测运行整个模型也会对性能产生重要影响。</li>
+</ul>
+<h2 id="条件计算的胜利"><a href="#条件计算的胜利" class="headerlink" title="条件计算的胜利"></a>条件计算的胜利</h2><ul>
+<li>假设神经网络的稀疏性，特别是在前馈层（FFN），像 Transformer（ChatGPT、Gemini、Sora等）这样的架构很常见，我们基本上将这些层“分解”成形状相同的小组，我们称之为“专家”。</li>
+</ul>
+<p><img src="/img/note/202405042308.png"></p>
+<h3 id="混合专家的优势"><a href="#混合专家的优势" class="headerlink" title="混合专家的优势"></a>混合专家的优势</h3><ul>
+<li><p>FFN（前馈神经网络）在 Transformer 模型中的作用是将输入向量投射到更高维度的空间中，以便发掘数据中原本隐藏的细微差别。这一步骤是模型成功的关键之一，但也伴随着高昂的处理成本。虽然FFN层虽然拥有大量的参数，但在每次预测过程中，只有一小部分参数会被实际激活并参与到计算中。</p>
+</li>
+<li><p>在MoE架构中，FFN层被分解为多个“专家”（experts），每个专家实际上是FFN参数的一个子集。这些专家可以根据其特定的功能被设计成处理不同类型的输入或特征。在模型进行预测时，一个路由器（router）机制会决定哪些专家将被激活并参与到当前的计算中。这种设计的优势在于它能够显著提高模型的效率和可扩展性。</p>
+</li>
+<li><p>此外，MoE模型还提供了一种细粒度的方式来研究和理解模型内部的工作机制。通过观察哪些专家被激活以及它们如何随着时间变化，研究人员可以更深入地洞察模型是如何学习和泛化知识，以及它是如何处理不同的输入特征的。</p>
+</li>
+</ul>
+<h3 id="什么是混合专家"><a href="#什么是混合专家" class="headerlink" title="什么是混合专家"></a>什么是混合专家</h3><ul>
+<li>路由器会主动选择那些它预测会知道答案的专家。而且由于从一开始就这样做，不同的专家会专注于不同的主题。</li>
+</ul>
+<p><img src="/img/note/202405042309.png"></p>
+<ul>
+<li><p>工作原理如下：</p>
+<ol>
+<li><p>输入的门控选择：当输入数据进入模型时，首先会经过一个门控机制，该机制负责决定哪些专家将参与到当前的计算中。这个门控通常是一个softmax函数，它能够基于输入数据的特征，为每个专家计算一个概率分布，表明每个专家被激活的可能性。</p>
+</li>
+<li><p>专家的概率分布：以一个具有四位专家的MoE层为例，门控可能会输出如下的概率分布：[专家 1：25%，专家 2：14%，专家 3：50%，专家 4：11%]。这个分布反映了输入数据与各个专家相关性的大小，概率越高，表示该专家对于当前输入的预测任务越重要。</p>
+</li>
+<li><p>专家的激活：根据门控输出的概率分布，一部分专家将被选中并激活。在这个例子中，专家3和专家1因为具有较高的激活概率，将被选中参与到后续的计算中。这意味着，只有这两个专家的参数将被用于处理当前的输入数据。</p>
+</li>
+</ol>
+</li>
+<li><p>每个专家都会在自己的专业主题上变得更加熟练。且计算效率更高。</p>
+</li>
+<li><p>这些架构仍然存在两个弊端</p>
+<ol>
+<li><p>由于专家数量有限，每个专家最终都要处理广泛的知识，这就产生了知识混合性。这种广泛性阻碍了专家们在特定领域进行深入的专业化。</p>
+</li>
+<li><p>当 MoE 模型中的不同专家学习相似的知识时，就会出现知识冗余，这首先就违背了对模型进行划分的意义。</p>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><p>混合专家模型（MoE）是一种高效的神经网络架构，由多个专家网络组成，每个专家专注于输入数据的不同部分，并通过一个门控网络动态地选择哪些专家参与计算。MoE模型在自然语言处理（NLP）和计算机视觉领域显示出了巨大的潜力，尤其是在处理大规模数据集和参数数量庞大的模型时。</p>
+</li>
+<li><p>MoE模型的关键优势包括：</p>
+<ol>
+<li><p>计算效率：MoE模型能够在保持参数数量巨大的情况下，以恒定的计算成本运行，因为每次前向传播只激活一部分专家。</p>
+</li>
+<li><p>预训练速度：MoE模型在预训练阶段可以更快地达到相同的质量水平，与稠密模型相比，它们通常能够更快地完成训练。</p>
+</li>
+<li><p>推理速度：在推理时，MoE模型由于其稀疏性，可以比具有相同参数数量的稠密模型更快地完成任务。</p>
+</li>
+</ol>
+</li>
+<li><p>MoE模型也面临一些挑战：</p>
+<ol>
+<li><p>训练稳定性：MoE模型在训练过程中可能会遇到稳定性问题，需要特别设计的技术和方法来解决。</p>
+</li>
+<li><p>内存需求：尽管MoE模型在推理时参数数量较少，但它们需要将所有专家的参数加载到内存中，这可能导致对显存的高需求。</p>
+</li>
+<li><p>微调难度：MoE模型在微调阶段可能面临泛化能力不足的问题，需要更精细的调整和策略。</p>
+</li>
+</ol>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Xinhao Zhong</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/04/30/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E6%B7%B7%E5%90%88%E4%B8%93%E5%AE%B6/">http://example.com/2024/04/30/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E6%B7%B7%E5%90%88%E4%B8%93%E5%AE%B6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Xinhao Zhong</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/cover.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/05/12/%E9%9D%A2%E8%AF%95%E7%9B%B8%E5%85%B3/%E9%9D%A2%E8%AF%95%E5%9C%BA%E6%99%AF%E9%A2%98/" title="面试场景题"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">面试场景题</div></div></a></div><div class="next-post pull-right"><a href="/2024/04/30/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E4%BC%98%E5%8C%96%E5%99%A8/" title="优化器"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">优化器</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Xinhao Zhong</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">65</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Twxwx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">A Little Bit More</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%9A%84%E7%A8%80%E7%96%8F%E6%80%A7"><span class="toc-number">2.</span> <span class="toc-text">知识的稀疏性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A5%9E%E7%BB%8F%E5%85%83%E7%9A%84%E7%A8%80%E7%96%8F%E6%80%A7"><span class="toc-number">2.1.</span> <span class="toc-text">神经元的稀疏性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A5%9E%E7%BB%8F%E5%85%83%E7%9A%84%E5%A4%9A%E4%B9%89%E6%80%A7"><span class="toc-number">2.2.</span> <span class="toc-text">神经元的多义性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90%E7%9A%84%E6%9C%89%E9%99%90%E6%80%A7"><span class="toc-number">2.3.</span> <span class="toc-text">计算资源的有限性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E8%AE%A1%E7%AE%97%E7%9A%84%E8%83%9C%E5%88%A9"><span class="toc-number">3.</span> <span class="toc-text">条件计算的胜利</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%B7%E5%90%88%E4%B8%93%E5%AE%B6%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">3.1.</span> <span class="toc-text">混合专家的优势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%B7%B7%E5%90%88%E4%B8%93%E5%AE%B6"><span class="toc-number">3.2.</span> <span class="toc-text">什么是混合专家</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/10/23/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%93%E5%90%88%E5%A4%A7%E6%A8%A1%E5%9E%8B/" title="知识图谱结合大模型">知识图谱结合大模型</a><time datetime="2024-10-23T12:27:01.000Z" title="发表于 2024-10-23 20:27:01">2024-10-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/10/09/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" title="大模型存在问题及解决方法">大模型存在问题及解决方法</a><time datetime="2024-10-09T15:33:49.000Z" title="发表于 2024-10-09 23:33:49">2024-10-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/29/CV/DINO/" title="DINO">DINO</a><time datetime="2024-09-29T08:39:17.000Z" title="发表于 2024-09-29 16:39:17">2024-09-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/22/NLP/RNN%E5%92%8CLSTM/" title="RNN和LSTM">RNN和LSTM</a><time datetime="2024-09-22T08:36:24.000Z" title="发表于 2024-09-22 16:36:24">2024-09-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/21/%E6%90%9C%E5%B9%BF%E6%8E%A8/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95-%E7%B2%BE%E6%8E%92/" title="推荐算法-精排">推荐算法-精排</a><time datetime="2024-09-21T15:25:58.000Z" title="发表于 2024-09-21 23:25:58">2024-09-21</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Xinhao Zhong</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

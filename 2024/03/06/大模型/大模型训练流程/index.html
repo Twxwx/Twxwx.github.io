@@ -1,0 +1,212 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>大模型训练流程 | Xinhao Zhong</title><meta name="author" content="Xinhao Zhong"><meta name="copyright" content="Xinhao Zhong"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="参考链接 预训练阶段（Pretraining Stage） Pretraining 的思路很简单，就是输入一堆文本，让模型做 Next Token Prediction 的任务  数据源采样 通过「数据源」采样的方式，能够缓解模型在训练的时候受到「数据集规模大小」的影响。对于相对较大的数据集（Common Crawl）会使用相对较大的采样比例（60%），而对于规模比较小的数据集（Wikipedia">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大模型训练流程">
+<meta property="og:url" content="http://example.com/2024/03/06/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Xinhao Zhong">
+<meta property="og:description" content="参考链接 预训练阶段（Pretraining Stage） Pretraining 的思路很简单，就是输入一堆文本，让模型做 Next Token Prediction 的任务  数据源采样 通过「数据源」采样的方式，能够缓解模型在训练的时候受到「数据集规模大小」的影响。对于相对较大的数据集（Common Crawl）会使用相对较大的采样比例（60%），而对于规模比较小的数据集（Wikipedia">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/cover.jpeg">
+<meta property="article:published_time" content="2024-03-06T15:10:48.000Z">
+<meta property="article:modified_time" content="2024-03-22T13:10:10.598Z">
+<meta property="article:author" content="Xinhao Zhong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/cover.jpeg"><link rel="shortcut icon" href="/img/crucifix.png"><link rel="canonical" href="http://example.com/2024/03/06/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '大模型训练流程',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-22 21:10:10'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">65</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/cover.jpeg')"><nav id="nav"><span id="blog-info"><a href="/" title="Xinhao Zhong"><span class="site-name">Xinhao Zhong</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">大模型训练流程</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-06T15:10:48.000Z" title="发表于 2024-03-06 23:10:48">2024-03-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-22T13:10:10.598Z" title="更新于 2024-03-22 21:10:10">2024-03-22</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/">大模型</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="大模型训练流程"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_36378508/article/details/133892782">参考链接</a></p>
+<h2 id="预训练阶段（Pretraining-Stage）"><a href="#预训练阶段（Pretraining-Stage）" class="headerlink" title="预训练阶段（Pretraining Stage）"></a>预训练阶段（Pretraining Stage）</h2><ul>
+<li>Pretraining 的思路很简单，就是输入一堆文本，让模型做 Next Token Prediction 的任务</li>
+</ul>
+<h3 id="数据源采样"><a href="#数据源采样" class="headerlink" title="数据源采样"></a>数据源采样</h3><ul>
+<li>通过「数据源」采样的方式，能够缓解模型在训练的时候受到「数据集规模大小」的影响。对于相对较大的数据集（Common Crawl）会使用相对较大的采样比例（60%），而对于规模比较小的数据集（Wikipedia），则将多被训练几次（3.4 个 epoch）。这样一来就能使得模型不会太偏向于规模较大的数据集，从而失去对规模小但作用大的数据集上的学习信息。</li>
+</ul>
+<h3 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h3><ul>
+<li>数据预处理主要指如何将「文档」进行向量化。通常来讲，在 Finetune 任务中，我们通常会直接使用 truncation 将超过阈值（2048）的文本给截断，但在 Pretrain 任务中，这种方式显得有些浪费。以书籍数据为例，一本书的内容肯定远远多余 2048 个 token，但如果采用头部截断的方式，则每本书永远只能够学习到开头的 2048 tokens 的内容（连序章都不一定能看完）。因此，最好的方式是将长文章按照 seq_len（2048）作分割，将切割后的向量喂给模型做训练。</li>
+</ul>
+<h3 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h3><ul>
+<li><p>为了加快模型的训练速度，通常会在 decoder 模型中加入一些 tricks 来缩短模型训练周期。目前大部分加速 tricks 都集中在 Attention 计算上（如：MQA 和 Flash Attention 等）；</p>
+</li>
+<li><p>为了让模型能够在不同长度的样本上都具备较好的推理能力，通常也会在 Position Embedding 上进行些处理，选用 ALiBi（[Bloom]）或 RoPE（[GLM-130B]）等。</p>
+</li>
+</ul>
+<h2 id="指令微调阶段"><a href="#指令微调阶段" class="headerlink" title="指令微调阶段"></a>指令微调阶段</h2><ul>
+<li><p>由于预训练任务的本质在于「续写」，而「续写」的方式并一定能够很好的回答用户的问题。因为训练大多来自互联网中的数据，我们无法保证数据中只存在存在规范的「一问一答」格式，这就会造成预训练模型通常无法直接给出人们想要的答案。</p>
+</li>
+<li><p>Self Instruction 的思路，即通过 ChatGPT 的输入输出来蒸馏自己的模型。</p>
+</li>
+<li><p>开源数据集有：Alpaca、BELLE、Vicuna、BAIZE</p>
+</li>
+</ul>
+<h2 id="奖励模型"><a href="#奖励模型" class="headerlink" title="奖励模型"></a>奖励模型</h2><ul>
+<li>Reward 模型基于 SFT 模型进行初始化</li>
+</ul>
+<h3 id="奖励模型的必要性"><a href="#奖励模型的必要性" class="headerlink" title="奖励模型的必要性"></a>奖励模型的必要性</h3><ul>
+<li><p>其实，当我们在做完 SFT 后，我们大概率已经能得到一个还不错的模型。但我们回想一下 SFT 的整个过程：我们一直都在告诉模型什么是「好」的数据，却没有给出「不好」的数据。我们更倾向于 SFT 的目的只是将 Pretrained Model 中的知识给引导出来的一种手段，而在SFT 数据有限的情况下，我们对模型的「引导能力」就是有限的。这将导致预训练模型中原先「错误」或「有害」的知识没能在 SFT 数据中被纠正，从而出现「有害性」或「幻觉」的问题。</p>
+</li>
+<li><p>为此，一些让模型脱离昂贵标注数据，自我进行迭代的方法被提出，比如：[RLHF]，[DPO]，但无论是 RL 还是 DPO，我们都需要让告知模型什么是「好的数据」，什么是「不好的数据」。RL 是直接告诉模型当前样本的（好坏）得分，DPO 是同时给模型一条好的样本和一条坏的样本。而判断样本数据的「好坏」除了昂贵的人工标注之外，那就是 Reward Model 大显身手的时候了。</p>
+</li>
+</ul>
+<h3 id="利用偏序对训练奖励模型"><a href="#利用偏序对训练奖励模型" class="headerlink" title="利用偏序对训练奖励模型"></a>利用偏序对训练奖励模型</h3><ul>
+<li>偏序对是指不直接为每一个样本直接打分，而是标注这些样本的好坏顺序。模型通过尝试最大化「好句子得分和坏句子得分之间的分差」，从而学会自动给每一个句子判分。</li>
+</ul>
+<p><img src="/img/note/202403081548.png"></p>
+<h2 id="强化学习"><a href="#强化学习" class="headerlink" title="强化学习"></a>强化学习</h2><h3 id="Direct-Preference-Optimisation（DPO）"><a href="#Direct-Preference-Optimisation（DPO）" class="headerlink" title="Direct Preference Optimisation（DPO）"></a>Direct Preference Optimisation（DPO）</h3><p><img src="/img/note/202403081549.png"></p>
+<ul>
+<li>DPO 相比 PPO 阶段的 reward 模型的 acurracy 是下降的，DPO 效果相比 PPO 可能会下降，这可能也是大模型还没广泛应用 DPO 的原因。</li>
+</ul>
+<h3 id="Proximal-Policy-Optimization（PPO）"><a href="#Proximal-Policy-Optimization（PPO）" class="headerlink" title="Proximal Policy Optimization（PPO）"></a>Proximal Policy Optimization（PPO）</h3><ul>
+<li><p>在 LLM 的训练中，使用 PPO 需要同时载入 4 个模型：</p>
+<ul>
+<li>Actor Model：真正优化的，需训练</li>
+<li>Critic Model：评估的，需训练</li>
+<li>Ref Model：SFT 模型，通过 KL 来限制 Actor 模型的训练方向，无需训练</li>
+<li>Reward Model：上一步获得的奖励模型，用于指导 Actor 无需训练</li>
+</ul>
+</li>
+<li><p>PPO 的训练目标如下：第一项的 reward 要尽可能大，同时第二项与 SFT 模型的偏移尽可能小</p>
+</li>
+</ul>
+<p><img src="/img/note/202403081550.png"></p>
+<ul>
+<li>为了节省显存，通常会将 actor &#x2F; critic 共享一个 backbone，这样只用同时载入 3 个模型。PPO 以其「训练过程不稳定」和「效果不稳定」著称，而且十分消耗资源</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Xinhao Zhong</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/03/06/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B/">http://example.com/2024/03/06/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Xinhao Zhong</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/cover.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/03/11/NLP/Transformer-XL/" title="Transformer-XL"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Transformer-XL</div></div></a></div><div class="next-post pull-right"><a href="/2024/03/05/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B9%BB%E8%A7%89%E9%97%AE%E9%A2%98/" title="大模型幻觉问题"><img class="cover" src="/img/cover.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">大模型幻觉问题</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Xinhao Zhong</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">65</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Twxwx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">A Little Bit More</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E8%AE%AD%E7%BB%83%E9%98%B6%E6%AE%B5%EF%BC%88Pretraining-Stage%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">预训练阶段（Pretraining Stage）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%BA%90%E9%87%87%E6%A0%B7"><span class="toc-number">1.1.</span> <span class="toc-text">数据源采样</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">数据预处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.</span> <span class="toc-text">模型结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E5%BE%AE%E8%B0%83%E9%98%B6%E6%AE%B5"><span class="toc-number">2.</span> <span class="toc-text">指令微调阶段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A5%96%E5%8A%B1%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">奖励模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A5%96%E5%8A%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%BF%85%E8%A6%81%E6%80%A7"><span class="toc-number">3.1.</span> <span class="toc-text">奖励模型的必要性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E5%81%8F%E5%BA%8F%E5%AF%B9%E8%AE%AD%E7%BB%83%E5%A5%96%E5%8A%B1%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.2.</span> <span class="toc-text">利用偏序对训练奖励模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="toc-number">4.</span> <span class="toc-text">强化学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Direct-Preference-Optimisation%EF%BC%88DPO%EF%BC%89"><span class="toc-number">4.1.</span> <span class="toc-text">Direct Preference Optimisation（DPO）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Proximal-Policy-Optimization%EF%BC%88PPO%EF%BC%89"><span class="toc-number">4.2.</span> <span class="toc-text">Proximal Policy Optimization（PPO）</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/10/23/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%93%E5%90%88%E5%A4%A7%E6%A8%A1%E5%9E%8B/" title="知识图谱结合大模型">知识图谱结合大模型</a><time datetime="2024-10-23T12:27:01.000Z" title="发表于 2024-10-23 20:27:01">2024-10-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/10/09/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" title="大模型存在问题及解决方法">大模型存在问题及解决方法</a><time datetime="2024-10-09T15:33:49.000Z" title="发表于 2024-10-09 23:33:49">2024-10-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/29/CV/DINO/" title="DINO">DINO</a><time datetime="2024-09-29T08:39:17.000Z" title="发表于 2024-09-29 16:39:17">2024-09-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/22/NLP/RNN%E5%92%8CLSTM/" title="RNN和LSTM">RNN和LSTM</a><time datetime="2024-09-22T08:36:24.000Z" title="发表于 2024-09-22 16:36:24">2024-09-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/09/21/%E6%90%9C%E5%B9%BF%E6%8E%A8/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95-%E7%B2%BE%E6%8E%92/" title="推荐算法-精排">推荐算法-精排</a><time datetime="2024-09-21T15:25:58.000Z" title="发表于 2024-09-21 23:25:58">2024-09-21</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Xinhao Zhong</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
